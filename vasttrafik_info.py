@@ -1,9 +1,7 @@
 import vasttrafik
 import dash_html_components as html
+import configparser
 
-
-KEY = "x6rHJ4c6XA4wk7Z9rDwv9WIL0awa"
-SECRET = "GUwBHbT2lRlKjB8uqaRogVycar8a"
 
 
 KEY_HEADER_MAPPING = {'name': 'Name',
@@ -47,13 +45,20 @@ class VTInfo(object):
 
 class VTDataReader(object):
 	def __init__(self, station):
-		self.jp = vasttrafik.JournyPlanner(key=KEY, secret=SECRET)
+		key, secret = self.get_key_secret()
+		self.jp = vasttrafik.JournyPlanner(key=key, secret=secret)
 		self.station = station
 	
 	def read_departure_board_station(self):
 		station_id = self.jp.location_name(self.station)[0]['id']
 		return self.jp.departureboard(station_id)
 
+	def get_key_secret(self):
+		configParser = configparser.RawConfigParser()
+		configParser.read('config.txt')
+		key = configParser.get('Vasttrafik', 'KEY')
+		secret = configParser.get('Vasttrafik', 'SECRET')
+		return key, secret
 
 
 
@@ -61,4 +66,4 @@ class VTDataReader(object):
 if __name__ == '__main__':
 	station = 'Bifrost'
 	travel_information = ['name', 'time', 'rtTime']
-	VTInfo(station, travel_information).display_info()
+	print(VTInfo(station, travel_information).display_info())
