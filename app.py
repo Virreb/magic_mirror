@@ -70,8 +70,6 @@ def update_graph_live(n):
         textposition='bottom'
     ))
 
-
-
     return {
         'data': traces,
         'layout': go.Layout(
