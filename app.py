@@ -31,11 +31,12 @@ def update_graph_live(n):
     time_string = datetime_string.split(' ')[1].split('.')[0]
     date_string = datetime_string.split(' ')[0]
     time_arr = time_string.split(':')
-    hour = int(time_arr[0])%12
-    minute = int(time_arr[1])
+    hour = float(time_arr[0])%12
+    minute = float(time_arr[1])
+    second = float(time_arr[2])
     radius = 90
-    hour_angle = float(hour)/6*np.pi
-    min_angle = float(minute)/30*np.pi
+    hour_angle = hour/6*np.pi + np.pi/6*minute/60
+    min_angle = minute/30*np.pi + np.pi/30*second/60
     traces = list()
     for i in range(12):
         angle = np.pi/6*i
