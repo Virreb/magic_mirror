@@ -1,1 +1,8 @@
-{"vasttrafik": {"station": "wavrinskys plats", "max_departures": 10, "forecast_minutes": 60, "travel_information": ["sname", "time", "time_to_departure", "direction"]} }
+{
+  "vasttrafik": {
+    "station": "Doktor Forselius Gata",
+    "max_departures": 10,
+    "forecast_minutes": 60,
+    "travel_information": ["sname", "time", "time_to_departure", "direction"]
+  }
+}
