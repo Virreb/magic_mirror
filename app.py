@@ -34,14 +34,14 @@ app.layout = html.Div(  # MAIN DIV
                 'top': '50px',
             },
             children=[
-                vasttrafik_info.VTInfo('Brunnsparken', ['sname', 'time', 'rtTime', 'direction']).display_info()
+                vasttrafik_info.VTInfo('Doktor Forselius Gata', ['sname', 'time', 'direction'], 60, 5).display_info()
                 ]
         ),
         html.Div(
             style=
             {
                 'position': 'absolute',
-                'left': f'{SCREEN_WIDTH - 50}px',
+                'left': f'{SCREEN_WIDTH - 500}px',
                 'top': '50px',
             },
             children=[
