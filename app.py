@@ -3,6 +3,7 @@ import dash
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
+import vasttrafik_info
 
 app = dash.Dash()
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})  # standard style
@@ -23,13 +24,26 @@ app.layout = html.Div(  # MAIN DIV
     },
     children=[
 
-        # This is a test output div
+        # Show busstimes from Västtrafik
         html.Div(
             style=
             {
                 'position': 'absolute',
                 'left': '50px',
                 'top': '50px',
+            },
+            children=[
+                vasttrafik_info.VTInfo('Brunnsparken', ['sname', 'time', 'rtTime', 'direction']).display_info()
+                ]
+        ),
+
+        # This is a test output div
+        html.Div(
+            style=
+            {
+                'position': 'absolute',
+                'left': f'{SCREEN_WIDTH - 300}px',
+                'top': '150px',
             },
             children=[
                 html.H1(id='test-h1', children='Test Div'),
