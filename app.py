@@ -34,9 +34,16 @@ app.layout = html.Div(  # MAIN DIV
                 'top': '50px',
             },
             children=[
-                vasttrafik_info.VTInfo('Doktor Forselius Gata', ['sname', 'time', 'direction'], 60, 5).display_info()
+                html.Div(id='vasttrafik-table'),
+                dcc.Interval(
+                    id='vasttrafik-interval',
+                    interval=60*1000,  # 60 seconds in milliseconds
+                    n_intervals=0
+                )
                 ]
         ),
+
+        # Show clock
         html.Div(
             style=
             {
@@ -47,8 +54,8 @@ app.layout = html.Div(  # MAIN DIV
             children=[
             dcc.Graph(id='live-update-clock'),
             dcc.Interval(
-                id='interval-component',
-                interval=1*1000, # in milliseconds
+                id='clock-interval',
+                interval=1*1000,    # in milliseconds
                 n_intervals=0
             )
         ]),
@@ -56,11 +63,16 @@ app.layout = html.Div(  # MAIN DIV
 )
 
 
-@app.callback(Output('live-update-clock', 'figure'),
-              [Input('interval-component', 'n_intervals')])
+@app.callback(Output('live-update-clock', 'figure'),     # Update clock every second
+              [Input('clock-interval', 'n_intervals')])
 def update_clock_time(n):
     return clock.get_time_graph()
 
+
+@app.callback(Output('vasttrafik-table', 'children'),     # Update buss table every minute
+              [Input('vasttrafik-interval', 'n_intervals')])
+def update_vasttrafik_table(n):
+    return vasttrafik_info.VTInfo('Doktor Forselius Gata', ['sname', 'time', 'time_to_departure', 'direction'], 60, 5).display_info()
 
 if __name__ == '__main__':
     app.run_server(debug=True, port=5000)

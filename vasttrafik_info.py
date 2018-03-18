@@ -1,7 +1,7 @@
 import vasttrafik
 import dash_html_components as html
 from datetime import datetime, timedelta
-from math import ceil
+from math import ceil, floor
 
 KEY = "x6rHJ4c6XA4wk7Z9rDwv9WIL0awa"
 SECRET = "GUwBHbT2lRlKjB8uqaRogVycar8a"
@@ -22,7 +22,8 @@ KEY_HEADER_MAPPING = {'name': 'Name',
         'fgColor': 'fgColor',
         'bgColor': 'bgColor',
         'stroke': 'Stroke',
-        'accessibility': 'accessibility'}
+        'accessibility': 'accessibility',
+        'time_to_departure': 'Avgår om'}
 
 
 class VTInfo(object):
@@ -37,31 +38,39 @@ class VTInfo(object):
         headers = [KEY_HEADER_MAPPING[x] for x in self.travel_information]
         table_header = [html.Tr([html.Th(col) for col in headers])]
         table_body = []
-        current_time = datetime.today().time()
+        current_time = datetime.today()
         nbr_shown_departures = 0
 
         for departure in self.data:
             table_row = []
 
-            time = datetime.strptime(departure['time'], '%H:%M')
-            break_time = (time + timedelta(minutes=self.forecast_minutes)).time()
+            departure_time = datetime.strptime(departure['time'], '%H:%M')
+            departure_time.replace(year=current_time.year, month=current_time.month, day=current_time.day)
+            break_time = (current_time + timedelta(minutes=self.forecast_minutes))
 
-            if current_time > break_time or nbr_shown_departures >= self.max_departures:
+            time_to_departure = departure_time - current_time
+            time_to_departure = floor(time_to_departure.seconds/60)
+            departure['time_to_departure'] = f'{time_to_departure}'
+
+            if departure_time > break_time or nbr_shown_departures >= self.max_departures:
                 continue
 
             if 'rtTime' in departure:
                 rt_time = datetime.strptime(departure['rtTime'], '%H:%M')
+                rt_time.replace(year=current_time.year, month=current_time.month, day=current_time.day)
 
-                if rt_time >= time:
-                    delayed = rt_time - time
+                if rt_time >= departure_time:
+                    delayed = rt_time - departure_time
                 else:
-                    delayed = time - rt_time
+                    delayed = departure_time - rt_time
 
                 delayed = ceil(delayed.seconds/60)
                 if delayed < 0:
-                    departure['time'] += f' - {delayed}'
+                    departure['time'] += f' (-{delayed})'
+                    departure['time_to_departure'] += f' (-{delayed})'
                 else:
-                    departure['time'] += f' + {delayed}'
+                    departure['time'] += f' (+{delayed})'
+                    departure['time_to_departure'] += f' (+{delayed})'
             else:
                 departure['rtTime'] = None
 
@@ -73,7 +82,7 @@ class VTInfo(object):
 
         title = html.H4(self.station)
         table = html.Table(table_header + table_body)
-        return html.Div(children=[title, table])
+        return [title, table]
 
 
 class VTDataReader(object):
