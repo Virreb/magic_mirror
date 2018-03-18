@@ -45,7 +45,10 @@ class VTInfo(object):
             table_row = []
 
             departure_time = datetime.strptime(departure['time'], '%H:%M')
-            departure_time.replace(year=current_time.year, month=current_time.month, day=current_time.day)
+            departure_time = departure_time.replace(year=current_time.year,
+                                                    month=current_time.month,
+                                                    day=current_time.day)
+
             break_time = (current_time + timedelta(minutes=self.forecast_minutes))
 
             time_to_departure = departure_time - current_time
@@ -57,7 +60,7 @@ class VTInfo(object):
 
             if 'rtTime' in departure:
                 rt_time = datetime.strptime(departure['rtTime'], '%H:%M')
-                rt_time.replace(year=current_time.year, month=current_time.month, day=current_time.day)
+                rt_time = rt_time.replace(year=current_time.year, month=current_time.month, day=current_time.day)
 
                 if rt_time >= departure_time:
                     delayed = rt_time - departure_time
