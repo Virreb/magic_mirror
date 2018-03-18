@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
 import dash
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
 import clock
 import vasttrafik_info
+import json
+import os
+
+if os.path.exists('config.json'):
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+else:
+    print('ERROR! Need config.json file for loading parameters, aborting.')
+    exit(0)
+
 
 app = dash.Dash()
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})  # standard style
@@ -72,7 +82,7 @@ def update_clock_time(n):
 @app.callback(Output('vasttrafik-table', 'children'),     # Update buss table every minute
               [Input('vasttrafik-interval', 'n_intervals')])
 def update_vasttrafik_table(n):
-    return vasttrafik_info.VTInfo('Doktor Forselius Gata', ['sname', 'time', 'time_to_departure', 'direction'], 60, 5).display_info()
+    return vasttrafik_info.VTInfo(**config['vasttrafik']).display_info()
 
 if __name__ == '__main__':
     app.run_server(debug=True, port=5000)
