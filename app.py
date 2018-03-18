@@ -3,11 +3,12 @@ import dash
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
+import clock
 import vasttrafik_info
 
 app = dash.Dash()
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})  # standard style
-app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/brPBPO.css"})  # grayed out while loading
+# app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/brPBPO.css"})  # grayed out while loading
 
 # GLOBALS
 SCREEN_WIDTH = 1080
@@ -36,50 +37,30 @@ app.layout = html.Div(  # MAIN DIV
                 vasttrafik_info.VTInfo('Brunnsparken', ['sname', 'time', 'rtTime', 'direction']).display_info()
                 ]
         ),
-
-        # This is a test output div
         html.Div(
             style=
             {
                 'position': 'absolute',
-                'left': f'{SCREEN_WIDTH - 300}px',
-                'top': '150px',
+                'left': f'{SCREEN_WIDTH - 50}px',
+                'top': '50px',
             },
             children=[
-                html.H1(id='test-h1', children='Test Div'),
-                html.H2(id='test-h2')
-            ]
-        ),
-        # This is a test input div
-        html.Div(
-            style={
-                'position': 'absolute',
-                'left': f'{SCREEN_WIDTH - 300}px',
-                'top': '50px'
-            },
-            children=[
-                html.Label('This is a test input'),
-                dcc.Input(id='test-input', type='text', placeholder='Input text', value='temp'),
-
-                html.Br(),
-
-                html.Button('Calculate!', n_clicks=0, id='test_button', className='button-primary'),
-            ]
-        )
+            dcc.Graph(id='live-update-clock'),
+            dcc.Interval(
+                id='interval-component',
+                interval=1*1000, # in milliseconds
+                n_intervals=0
+            )
+        ]),
     ]
 )
 
 
-@app.callback(  # callback to get parameters and show result
-    Output('test-h1', 'children'),
-    [Input('test_button', 'n_clicks')],   # fire state when submit button is pressed
-    [State('test-input', 'value'),
-     ]
-)
-def get_output(submit_button_clicks: int, test_input: str):
+@app.callback(Output('live-update-clock', 'figure'),
+              [Input('interval-component', 'n_intervals')])
+def update_clock_time(n):
+    return clock.get_time_graph()
 
-    #if submit_button_clicks > 0:
-    return f'{submit_button_clicks}, {test_input}'
 
 if __name__ == '__main__':
     app.run_server(debug=True, port=5000)
