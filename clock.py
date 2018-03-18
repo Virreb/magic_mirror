@@ -3,7 +3,7 @@ import numpy as np
 import plotly.graph_objs as go
 
 
-def update_time():
+def get_time_graph():
 
     # Get current time and parse hours, minutes, seconds
     datetime_string = datetime.datetime.now().__str__()

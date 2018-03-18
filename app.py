@@ -21,8 +21,8 @@ app.layout = html.Div(
 
 @app.callback(Output('live-update-clock', 'figure'),
               [Input('interval-component', 'n_intervals')])
-def update_graph_live(n):
-    clock.update_time()
+def update_clock_time(n):
+    clock.get_time_graph()
 
 if __name__ == '__main__':
     app.run_server(debug=True, port=5000)
