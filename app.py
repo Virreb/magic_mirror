@@ -5,6 +5,12 @@ import dash_core_components as dcc
 import dash_html_components as html
 import clock
 import vasttrafik_info
+import json
+
+with open('Parameters.json', 'r') as f:
+    parameter_data = json.load(f)
+vasttrafik_parameters = parameter_data['vasttrafik']
+
 
 app = dash.Dash()
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})  # standard style
@@ -34,7 +40,7 @@ app.layout = html.Div(  # MAIN DIV
                 'top': '50px',
             },
             children=[
-                vasttrafik_info.VTInfo('Doktor Forselius Gata', ['sname', 'time', 'direction'], 60, 5).display_info()
+                vasttrafik_info.VTInfo(**vasttrafik_parameters).display_info()
                 ]
         ),
         html.Div(
